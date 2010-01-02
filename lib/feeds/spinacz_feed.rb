@@ -1,8 +1,20 @@
 class SpinaczFeed
-  def self.post_text(text)
+	attr_accessor :hash
+
+	def setup(config={})
+		self.hash = config['hash']
+	end
+	
+	def send(options={})
     url = URI.parse("http://spinacz.pl/feeds/add.json")
     req = Net::HTTP::Post.new(url.path)
-    req.set_form_data({'content'=> text, 'HASH'=> '839c82e0679b64132f528fa71a9e88d1'}, '&')
+		
+		
+		body = options[:msg]
+		body += " - " + options[:link] if options[:link]
+		body += " " + options[:tags].map { |tag| "##{tag}" }.join(', ') if options[:tags] 
+		
+    req.set_form_data({'content'=> body, 'HASH'=> self.hash}, '&')
     res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
-  end
+	end
 end

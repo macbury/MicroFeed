@@ -1,5 +1,5 @@
 class FlakerFeed
-	attr_accessor :login, :password
+	attr_accessor :user, :password
 
 	def setup(config={})
 		self.user = config['login']
@@ -13,7 +13,7 @@ class FlakerFeed
 		req.basic_auth self.user, self.password
 		
 		body = options[:msg]
-		body += " " + tags.map { |tag| "##{tag}" }.join(', ') if options[:tags]
+		body += " " + options[:tags].map { |tag| "##{tag}" }.join(', ') if options[:tags]
 		
 		req.set_form_data({'text'=>body, 'link'=>options[:link]}, '&')
 		res = Net::HTTP.new(url.host, url.port).start {|http| http.request(req) }
